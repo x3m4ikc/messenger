@@ -11,13 +11,15 @@ DB_PORT = config.db_port.get_secret_value()
 DB_HOST = config.db_host.get_secret_value()
 
 engine = create_async_engine(
-    url='postgresql+asyncpg://{}:{}@{}:{}/{}'.format(DB_USER, DB_PASS, DB_HOST, DB_PORT, DB_NAME),
-    echo=True
+    url="postgresql+asyncpg://{}:{}@{}:{}/{}".format(
+        DB_USER, DB_PASS, DB_HOST, DB_PORT, DB_NAME
+    ),
+    echo=True,
 )
 
-session_maker = async_sessionmaker(bind=engine,
-                                   class_=AsyncSession,
-                                   expire_on_commit=False)
+session_maker = async_sessionmaker(
+    bind=engine, class_=AsyncSession, expire_on_commit=False
+)
 
 metadata = MetaData()
 Base = declarative_base()

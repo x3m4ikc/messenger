@@ -1,13 +1,13 @@
 import enum
-from sqlalchemy import String, TIMESTAMP, func,Enum, ForeignKey
+from sqlalchemy import String, TIMESTAMP, func, Enum, ForeignKey
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 
 from messenger.database.engine import Base, metadata
 
 
 class ChatTypes(enum.Enum):
-    PRIVATE = 'PRIVATE'
-    GROUP = 'GROUP'
+    PRIVATE = "PRIVATE"
+    GROUP = "GROUP"
 
 
 class BaseModel(Base):
@@ -16,7 +16,7 @@ class BaseModel(Base):
 
 
 class Users(BaseModel):
-    __tablename__ = 'users'
+    __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String(100), nullable=False)
@@ -29,7 +29,7 @@ class Users(BaseModel):
 
 
 class Chats(BaseModel):
-    __tablename__ = 'chats'
+    __tablename__ = "chats"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String(100), nullable=False)
@@ -41,11 +41,11 @@ class Chats(BaseModel):
 
 
 class Groups(BaseModel):
-    __tablename__ = 'groups'
+    __tablename__ = "groups"
 
-    id: Mapped[int] = mapped_column(ForeignKey('chats.id'), primary_key=True)
+    id: Mapped[int] = mapped_column(ForeignKey("chats.id"), primary_key=True)
     name: Mapped[str] = mapped_column(String(100), nullable=False)
-    creator_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
+    creator_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
 
     chat = relationship("Chat", back_populates="group_info")
     creator = relationship("User", back_populates="created_groups")
@@ -53,21 +53,21 @@ class Groups(BaseModel):
 
 # Добавил от себя таблицу chat_members для более удобного управления участниками групповых чатов
 class ChatMembers(BaseModel):
-    __tablename__ = 'chat_members'
+    __tablename__ = "chat_members"
 
-    chat_id: Mapped[int] = mapped_column(ForeignKey('chats.id'), primary_key=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), primary_key=True)
+    chat_id: Mapped[int] = mapped_column(ForeignKey("chats.id"), primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), primary_key=True)
 
     chat = relationship("Chat", back_populates="members")
     user = relationship("User", back_populates="chat_memberships")
 
 
 class Messages(BaseModel):
-    __tablename__ = 'messages'
+    __tablename__ = "messages"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    chat_id: Mapped[int] = mapped_column(ForeignKey('chats.id'))
-    sender_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
+    chat_id: Mapped[int] = mapped_column(ForeignKey("chats.id"))
+    sender_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     text: Mapped[str] = mapped_column(String(1000), nullable=False)
     timestamp: Mapped[TIMESTAMP] = mapped_column(TIMESTAMP, server_default=func.now())
     is_read: Mapped[bool] = mapped_column(default=False)
